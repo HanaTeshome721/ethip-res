@@ -3,6 +3,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import cors from "cors";
 import connectDB from "./config/db.js";
 import authRouter from "./routes/authRoutes.js";
+import restaurantRouter from "./routes/restaurantRoutes.js";
 
 const app = express();
 
@@ -17,7 +18,7 @@ app.use(express.json());
 const port = process.env.PORT || 5000;
 
 app.use('/api/auth',authRouter)
-
+app.use('/api/restaurants',restaurantRouter)
 
 
 // global erro handeller
