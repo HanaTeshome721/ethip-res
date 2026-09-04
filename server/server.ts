@@ -5,10 +5,11 @@ import connectDB from "./config/db.js";
 import authRouter from "./routes/authRoutes.js";
 import restaurantRouter from "./routes/restaurantRoutes.js";
 import bookingRouter from "./routes/bookingRoute.js";
+import ownerRouter from "./routes/ownerRouter.js";
 
 const app = express();
 
-// connect to mongoDB
+// connect to mongoDB 
 
 await connectDB()
 
@@ -21,6 +22,7 @@ const port = process.env.PORT || 5000;
 app.use('/api/auth',authRouter)
 app.use('/api/restaurants',restaurantRouter)
 app.use('/api/bookings',bookingRouter)
+app.use('/api/owner',ownerRouter)
 
 
 // global erro handeller
