@@ -37,7 +37,7 @@ export default function BookingForm({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {/* Name */}
                     <div className="space-y-1">
-                        <label className="block text-[10px] font-medium text-black/55 tracking-wider uppercase">FULL NAME</label>
+                        <label className="block text-[10px] font-medium text-black/55 tracking-wider uppercase">FULL NAME =</label>
                         <input
                             type="text"
                             value={name}
