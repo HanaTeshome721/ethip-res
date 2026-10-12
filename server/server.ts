@@ -15,7 +15,16 @@ const app = express();
 await connectDB()
 
 // Middleware
-app.use(cors())
+// app.use(cors())
+
+app.use(
+  cors({
+    origin: "https://ethip-res-client.vercel.app",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 app.use(express.json());
 
 const port = process.env.PORT || 5000;
