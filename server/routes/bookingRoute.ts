@@ -7,7 +7,7 @@ const bookingRouter =Router()
 
 bookingRouter.post('/',protect,createBooking)
 bookingRouter.get('/my',protect,getMyBooking)
-bookingRouter.put('/:id/',protect,cancelBooking)
+bookingRouter.put('/:id/cancel',protect,cancelBooking)
 
 
 
