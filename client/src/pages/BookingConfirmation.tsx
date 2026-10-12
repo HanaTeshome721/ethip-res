@@ -10,7 +10,8 @@ import Loader from "../components/Loader.tsx";
 import BookingSuccess from "../components/booking/BookingSuccess.tsx";
 import BookingSummary from "../components/booking/BookingSummary.tsx";
 import BookingForm from "../components/booking/BookingForm.tsx";
-import { dummyBookingData, dummyRestaurant } from "../assets/assets.ts";
+// import { dummyBookingData, dummyRestaurant } from "../assets/assets.ts";
+import api from "../lib/api.tsx";
 
 export default function BookingConfirmation() {
     const { slug } = useParams<{ slug: string }>();
@@ -48,8 +49,20 @@ export default function BookingConfirmation() {
 
     useEffect(() => {
         const fetchRestaurant = async () => {
-            setRestaurant(dummyRestaurant.find((r) => r.slug === slug));
-            setLoading(false);
+            try {
+                setLoading(true)
+                const res= await api.get(`/restaurants/${slug}`)
+                setRestaurant(res.data)
+            }  catch (error:any) {
+             toast.error(error?.response?.data?.message || error?.message)
+             console.error(error.message)
+             navigate('/')
+                
+            }finally{
+                setLoading(false)
+            }
+            // setRestaurant(dummyRestaurant.find((r) => r.slug === slug));
+            // setLoading(false);
         };
 
         if (slug) {
@@ -73,7 +86,10 @@ export default function BookingConfirmation() {
 
         try {
             setConfirming(true);
-            setConfirmedBooking(dummyBookingData);
+            // setConfirmedBooking(dummyBookingData);
+            const res= await api.post(`/bookings`,{restaurantId:restaurant._id,date,time:slot,guests,occasion,specialRequests})
+            setConfirmedBooking(res.data)
+
             toast.success("Reservation confirmed!");
         } catch (error: any) {
             toast.error(error?.response?.data?.message || error?.message);

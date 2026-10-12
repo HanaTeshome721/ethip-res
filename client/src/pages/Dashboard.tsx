@@ -8,7 +8,8 @@ import RestaurantCard from "../components/RestaurantCard.tsx";
 import AuthModal from "../components/AuthModal.tsx";
 import { CalendarIcon, UsersIcon, ClockIcon, MapPinIcon, CalendarDaysIcon } from "lucide-react";
 import toast from "react-hot-toast";
-import { dummyFeaturedRestaurants, dummyMyBookingsData } from "../assets/assets.ts";
+// import { dummyFeaturedRestaurants, dummyMyBookingsData } from "../assets/assets.ts";
+import api from "../lib/api.tsx";
 
 export default function Dashboard() {
     const { user } = useAppContext();
@@ -20,8 +21,21 @@ export default function Dashboard() {
     // Fetch user bookings
     useEffect(() => {
         const fetchBookings = async () => {
-            setBookings(dummyMyBookingsData);
-            setLoadingBookings(false);
+
+            try {
+                setLoadingBookings(true)
+                const res=await api.get("/bookings/my")
+                setBookings(res.data)
+            } catch (error:any) {
+             toast.error(error?.response?.data?.message || error?.message)
+             console.error(error.message)
+             
+                
+            }finally{
+                setLoadingBookings(false)
+            }
+            // setBookings(dummyMyBookingsData);
+            // setLoadingBookings(false);
         };
 
         if (user) {
@@ -32,7 +46,15 @@ export default function Dashboard() {
     // Fetch generic recommendations
     useEffect(() => {
         const fetchRecommendations = async () => {
-            setRecommendations(dummyFeaturedRestaurants);
+            try {
+                const res= await api.get("/restaurants/featured")
+                setRecommendations(res.data)
+            }  catch (error:any) {
+             toast.error(error?.response?.data?.message || error?.message)
+             console.error(error.message)
+                 
+            }
+            // setRecommendations(dummyFeaturedRestaurants);
         };
         fetchRecommendations();
     }, []);
@@ -43,7 +65,11 @@ export default function Dashboard() {
         }
 
         try {
-            setBookings((prev) => prev.map((b) => (b._id === bookingId ? { ...b, status: "cancelled" } : b)));
+            // setBookings((prev) => prev.map((b) => (b._id === bookingId ? { ...b, status: "cancelled" } : b)));
+
+            await api.put(`/bookings/${bookingId}/cancel`)
+            // update local state
+            setBookings((prev)=>prev.map((b)=>(b._id===bookingId ? {...b,status:"cancelled"}:b)))
             toast.success("Reservation cancelled successfully.");
         } catch (error: any) {
             toast.error(error?.response?.data?.message || error?.message);
