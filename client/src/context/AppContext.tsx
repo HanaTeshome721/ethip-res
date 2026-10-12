@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { dummyUser } from "../assets/assets.js";
+// import { dummyUser } from "../assets/assets.js";
+import toast from "react-hot-toast";
+import api from "../lib/api.js";
 
 interface UserType {
     _id: string;
@@ -36,21 +38,55 @@ export const AppContextProvider = ({ children }: Props) => {
     const [isAuthModalOpen, setAuthModalOpen] = useState<boolean>(false);
 
     const login = async (email: string, password: string): Promise<boolean> => {
-        console.log(email, password);
-        setToken(dummyUser.token);
-        setUser(dummyUser as any);
-        setToken(dummyUser.token);
-        localStorage.setItem("token", dummyUser.token);
-        return true;
+        try {
+            setLoading(true);
+            const res= await api.post("/auth/login",{email,password})
+            const {token:UserToken,...userData}=res.data;
+
+            localStorage.setItem("token",UserToken);
+            setToken(UserToken)
+            setUser(userData)
+            toast.success(`welcome back, ${userData.name}`)
+            return true;
+        } catch (error:any) {
+            toast.error(error?.response?.data?.message || error?.message)
+            return false
+        }finally{
+            setLoading(false)
+        }
+
+        // console.log(email, password);
+        // setToken(dummyUser.token);
+        // setUser(dummyUser as any);
+        // setToken(dummyUser.token);
+        // localStorage.setItem("token", dummyUser.token);
+        // return true;
     };
 
     const register = async (name: string, email: string, password: string, phone?: string, role?: string): Promise<boolean> => {
-        console.log(name, email, password, phone, role);
-        setToken(dummyUser.token);
-        setUser(dummyUser as any);
-        setToken(dummyUser.token);
-        localStorage.setItem("token", dummyUser.token);
-        return true;
+
+        try {
+            setLoading(true);
+            const res= await api.post("/auth/register",{name,email,password,phone,role})
+            const {token:UserToken,...userData}=res.data;
+
+            localStorage.setItem("token",UserToken);
+            setToken(UserToken)
+            setUser(userData)
+            toast.success(`welcome to QuickDine club!`)
+            return true;
+        } catch (error:any) {
+            toast.error(error?.response?.data?.message || error?.message)
+            return false
+        }finally{
+            setLoading(false)
+        }
+        // console.log(name, email, password, phone, role);
+        // setToken(dummyUser.token);
+        // setUser(dummyUser as any);
+        // setToken(dummyUser.token);
+        // localStorage.setItem("token", dummyUser.token);
+        // return true;
     };
 
     const logout = () => {
@@ -63,7 +99,14 @@ export const AppContextProvider = ({ children }: Props) => {
     useEffect(() => {
         const loadUser = async () => {
             if (token) {
-                setUser(dummyUser as any);
+                // setUser(dummyUser as any);
+                try {
+                    const res=await api.get('/auth/me');
+                    setUser(res.data)
+                } catch (error:any) {
+                    toast.error(error?.response?.data?.message || error?.message)
+                    logout()
+                }
             }
             setLoading(false);
         };
