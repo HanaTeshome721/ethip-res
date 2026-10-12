@@ -52,7 +52,7 @@ export const getRestaurants = async (req:Request,res:Response):Promise <void> =>
 
         const restaurant = await Restaurant.find(queryObj).sort(sortOption)
 
-
+            res.status(200).json(restaurant)
 
     } catch (error:any) {
         console.error(error)

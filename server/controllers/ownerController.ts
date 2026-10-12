@@ -20,7 +20,6 @@ const uploadToCloudinary =(fileBuffer:Buffer) : Promise<{secure_url:string}>=>{
 }
 
 
-
 // get owner restaurant
 // GET /api/owner/restaurant
 
@@ -62,7 +61,7 @@ export const createOwnerRestaurant = async (req:AuthRequest,res:Response): Promi
         }
 
         // generate slug from name
-        const slug= name.toLowercase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)+/g,"")
+        const slug= name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)+/g,"")
         const slugExists = await Restaurant.findOne({slug});
         if(slugExists){
             res.status(400).json({message:"A restaurant with this name already exist"})
@@ -202,7 +201,7 @@ export const updateBookingStatus = async (req:AuthRequest,res:Response): Promise
         // verify booking blong to the owner restaurant
         const restaurant = await Restaurant.findById(booking.restaurant)
 
-        if (!restaurant ||restaurant.owner.toString()){
+        if (!restaurant || !restaurant.owner.toString()){
              res.status(401).json({message: " not authorized to manage this booking"})
              return;
         }
