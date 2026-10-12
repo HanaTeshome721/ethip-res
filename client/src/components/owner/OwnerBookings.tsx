@@ -2,6 +2,7 @@
 import React from "react";
 import { Calendar, Users, Clock } from "lucide-react";
 import toast from "react-hot-toast";
+import api from "../../lib/api";
 
 interface OwnerBookingsProps {
     bookings: any[];
@@ -10,8 +11,11 @@ interface OwnerBookingsProps {
 }
 
 export default function OwnerBookings({ bookings, setBookings, totalSeats }: OwnerBookingsProps) {
+
     const handleUpdateBookingStatus = async (bookingId: string, newStatus: string) => {
         try {
+            // setBookings((prev) => prev.map((b) => (b._id === bookingId ? { ...b, status: newStatus } : b)));
+            await api.put(`/owner/bookings/${bookingId}/status`,{status:newStatus})
             setBookings((prev) => prev.map((b) => (b._id === bookingId ? { ...b, status: newStatus } : b)));
             toast.success(`Booking status updated to ${newStatus}`);
         } catch (error: any) {
