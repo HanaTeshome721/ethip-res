@@ -23,7 +23,7 @@ export const registerUser= async (req:Request,res:Response) : Promise<void> => {
 
         // check if user exists
 
-        const userExist = await User.find({email})
+        const userExist = await User.findOne({email})
         if (userExist){
             res.status(400).json({message:"user already exist"})
             return ;

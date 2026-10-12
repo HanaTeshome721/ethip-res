@@ -45,7 +45,10 @@ export const approveRestaurant = async(req:AuthRequest,res:Response): Promise<vo
             return;
         }
         restaurant.status=status;
-        res.json(restaurant);
+        await restaurant.save();
+
+        res.status(200).json(restaurant);
+
     } catch (error:any) {
      
         console.error(error)
@@ -65,24 +68,23 @@ export const getAdminStats = async(req:AuthRequest,res:Response): Promise<void> 
         const totalRestaurants= await Restaurant.countDocuments({})
         
         //GET latest 10 bookings
-        const lastestBooking = await Booking
+        const latestBookings = await Booking
         .find({}).populate('user',"name email").populate("restaurant","name").sort({createdAt:-1}).limit(10) 
 
-        res.json({
-            users:{
-                totalUsers,
-                totalOwners,
-                total: totalOwners + totalUsers,
-            },
-            restaurants:{
-                total:totalRestaurants,
-            },
-            bookings:{
-                total:totalBooking,
-            },
-            lastestBooking,
-
-        })
+     res.status(200).json({
+        users: {
+            totalUsers,
+            totalOwners,
+            total: totalUsers + totalOwners,
+        },
+        restaurants: {
+            total: totalRestaurants,
+        },
+        bookings: {
+            total: totalBooking,
+        },
+        latestBookings,
+        });
 
     } catch (error:any) {
      

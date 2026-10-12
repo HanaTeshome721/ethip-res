@@ -6,7 +6,9 @@ import Footer from "../components/Footer.tsx";
 import RestaurantCard from "../components/RestaurantCard.tsx";
 import AuthModal from "../components/AuthModal.tsx";
 import { SlidersHorizontal, Search as SearchIcon, X, Check, MapPin, SearchXIcon } from "lucide-react";
-import { dummyRestaurant } from "../assets/assets.ts";
+import api from "../lib/api.tsx";
+import toast from "react-hot-toast";
+// import { dummyRestaurant } from "../assets/assets.ts";
 
 export default function Search() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -37,8 +39,21 @@ export default function Search() {
 
     useEffect(() => {
         const fetchRestaurants = async () => {
-            setRestaurants(dummyRestaurant);
-            setLoading(false);
+            // setRestaurants(dummyRestaurant);
+        //    setLoading(false); 
+            try {
+                setLoading(true)
+                // construct query string directly from seacrparams
+                const res = await api.get(`/restaurants?${searchParams.toString()}`)
+
+                setRestaurants(res.data)
+            } catch (error:any) {
+                toast.error(error?.response?.data?.message || error?.message)
+                
+            }finally{
+                setLoading(false);
+            }
+            
         };
 
         fetchRestaurants();

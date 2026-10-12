@@ -12,7 +12,7 @@ export const createBooking= async(req:AuthRequest,res:Response) : Promise<void>=
     try {
         const {restaurantId, date,time,guests,occasion,specialRequests} = req.body
 
-        if(!restaurantId || !date || !time || !guests || !occasion ||!specialRequests){
+        if(!restaurantId || !date || !time || !guests ){
             res.status(400).json({message:"pls provide all required reservation details"})
             return;
 
